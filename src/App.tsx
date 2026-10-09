@@ -1,6 +1,4 @@
-import {
-    Refine,
-} from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 
 import {
     DevtoolsPanel,
@@ -31,6 +29,7 @@ import SubjectList from "./pages/Subjects/list.tsx";
 import SubjectCreate from "./pages/Subjects/create.tsx";
 
 import { dataProvider } from "./providers/data";
+
 import { useNotificationProvider } from "./components/refine-ui/notification/use-notification-provider";
 import { Toaster } from "./components/refine-ui/notification/toaster";
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
@@ -45,7 +44,6 @@ function App() {
             <RefineKbarProvider>
                 <ThemeProvider>
                     <DevtoolsProvider>
-
                         <Refine
                             dataProvider={dataProvider}
                             notificationProvider={useNotificationProvider()}
@@ -76,8 +74,6 @@ function App() {
                             ]}
                         >
                             <Routes>
-
-                                {/* Layout */}
                                 <Route
                                     element={
                                         <Layout>
@@ -85,14 +81,11 @@ function App() {
                                         </Layout>
                                     }
                                 >
-
-                                    {/* Dashboard */}
                                     <Route
                                         path="/"
                                         element={<Dashboard />}
                                     />
 
-                                    {/* Subjects */}
                                     <Route path="/subjects">
                                         <Route
                                             index
@@ -104,18 +97,14 @@ function App() {
                                             element={<SubjectCreate />}
                                         />
                                     </Route>
-
                                 </Route>
-
                             </Routes>
 
                             <Toaster />
                             <RefineKbar />
                             <UnsavedChangesNotifier />
                             <DocumentTitleHandler />
-
                             <DevtoolsPanel />
-
                         </Refine>
                     </DevtoolsProvider>
                 </ThemeProvider>
