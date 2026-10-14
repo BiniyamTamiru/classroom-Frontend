@@ -28,7 +28,7 @@ import { Layout } from "./components/refine-ui/layout/layout";
 import SubjectList from "./pages/Subjects/list.tsx";
 import SubjectCreate from "./pages/Subjects/create.tsx";
 
-import { dataProvider } from "./providers/data";
+import dataProvider from "./providers/data.ts";
 
 import { useNotificationProvider } from "./components/refine-ui/notification/use-notification-provider";
 import { Toaster } from "./components/refine-ui/notification/toaster";
