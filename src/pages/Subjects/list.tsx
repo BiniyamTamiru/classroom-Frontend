@@ -13,20 +13,34 @@ import { DEPARTMENTS_OPTIONS } from "@/components/constant";
 import { CreateButton } from "@/components/refine-ui/buttons/create.tsx";
 import { DataTable } from "@/components/refine-ui/data-table/data-table.tsx";
 import { useTable } from "@refinedev/react-table";
-import { Subject } from "@/types";
+import type { Subject } from "@/types";
 import { Badge } from "@/components/ui/badge.tsx";
+import { Search } from "lucide-react";
 
 const SubjectsList = () => {
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedDepartment, setSelectedDepartment] = useState("");
+    const [selectedDepartment, setSelectedDepartment] = useState("all");
 
-    const departementFilters = selectedDepartment == "all" ? [] : [
-        { field: "department", operator: "eq" as const, value: selectedDepartment }
-    ];
+    const departmentFilters =
+        selectedDepartment === "all"
+            ? []
+            : [
+                {
+                    field: "department",
+                    operator: "eq" as const,
+                    value: selectedDepartment,
+                },
+            ];
 
-    const SearchFilters = searchQuery ? [
-        { field: "name", operator: "contains" as const, value: searchQuery }
-    ] : [];
+    const searchFilters = searchQuery
+        ? [
+            {
+                field: "name",
+                operator: "contains" as const,
+                value: searchQuery,
+            },
+        ]
+        : [];
 
     const subjectTable = useTable<Subject>({
         columns: useMemo(
@@ -35,22 +49,16 @@ const SubjectsList = () => {
                     id: "code",
                     accessorKey: "code",
                     size: 100,
-                    header: () => (
-                        <p className="column-title ml-2">Code</p>
-                    ),
+                    header: () => <p className="column-title ml-2">Code</p>,
                     cell: ({ getValue }) => (
-                        <Badge>
-                            {getValue<string>()}
-                        </Badge>
+                        <Badge>{getValue<string>()}</Badge>
                     ),
                 },
                 {
                     id: "name",
                     accessorKey: "name",
                     size: 200,
-                    header: () => (
-                        <p className="column-title">Name</p>
-                    ),
+                    header: () => <p className="column-title">Name</p>,
                     cell: ({ getValue }) => (
                         <span className="text-foreground">
                             {getValue<string>()}
@@ -60,9 +68,11 @@ const SubjectsList = () => {
                 },
                 {
                     id: "department",
-                    accessorKey: "department",
+                    accessorKey: "department.name",
                     size: 150,
-                    header: () => <p className="column-title">Departement</p>,
+                    header: () => (
+                        <p className="column-title">Department</p>
+                    ),
                     cell: ({ getValue }) => (
                         <Badge variant="secondary">
                             {getValue<string>()}
@@ -72,9 +82,10 @@ const SubjectsList = () => {
                 {
                     id: "description",
                     accessorKey: "description",
-                    name: "description",
                     size: 300,
-                    header: () => <p className="column-title">Description</p>,
+                    header: () => (
+                        <p className="column-title">Description</p>
+                    ),
                     cell: ({ getValue }) => (
                         <span className="truncate line-clamp-2">
                             {getValue<string>()}
@@ -91,7 +102,7 @@ const SubjectsList = () => {
                 mode: "server",
             },
             filters: {
-                permanent: [...departementFilters, ...SearchFilters],
+                permanent: [...departmentFilters, ...searchFilters],
             },
             sorters: [
                 {
@@ -102,7 +113,6 @@ const SubjectsList = () => {
         },
     });
 
-    // @ts-ignore
     return (
         <ListView>
             <Breadcrumb />
@@ -115,21 +125,19 @@ const SubjectsList = () => {
                 </p>
 
                 <div className="action-row flex flex-col gap-4">
-                    <div className="search-field">
-                        <search className="search-icon" />
+                    <div className="search-field relative">
+                        <Search className="search-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
 
                         <Input
                             type="text"
                             placeholder="Search by name..."
-                            className="pl-10 w-full"
+                            className="w-full pl-10"
                             value={searchQuery}
-                            onChange={(e) =>
-                                setSearchQuery(e.target.value)
-                            }
+                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-4">
                         <Select
                             value={selectedDepartment}
                             onValueChange={setSelectedDepartment}
@@ -139,6 +147,10 @@ const SubjectsList = () => {
                             </SelectTrigger>
 
                             <SelectContent>
+                                <SelectItem value="all">
+                                    All departments
+                                </SelectItem>
+
                                 {DEPARTMENTS_OPTIONS.map((department) => (
                                     <SelectItem
                                         key={department.value}
@@ -147,10 +159,6 @@ const SubjectsList = () => {
                                         {department.label}
                                     </SelectItem>
                                 ))}
-
-                                <SelectItem value="all">
-                                    All departments
-                                </SelectItem>
                             </SelectContent>
                         </Select>
 
