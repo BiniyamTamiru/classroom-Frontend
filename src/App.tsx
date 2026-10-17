@@ -22,19 +22,26 @@ import routerProvider, {
     DocumentTitleHandler,
 } from "@refinedev/react-router";
 
-import Dashboard from "./pages/Dashboard.tsx";
+import Dashboard from "./pages/Dashboard";
 import { Layout } from "./components/refine-ui/layout/layout";
 
-import SubjectList from "./pages/Subjects/list.tsx";
-import SubjectCreate from "./pages/Subjects/create.tsx";
+import SubjectList from "./pages/Subjects/list";
+import SubjectCreate from "./pages/Subjects/create";
 
-import dataProvider from "./providers/data.ts";
+import ClassList from "./pages/classes/list";
+import ClassCreate from "./pages/classes/create";
+
+import dataProvider from "./providers/data";
 
 import { useNotificationProvider } from "./components/refine-ui/notification/use-notification-provider";
 import { Toaster } from "./components/refine-ui/notification/toaster";
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
 
-import { BookOpen, Home } from "lucide-react";
+import {
+    BookOpen,
+    GraduationCap,
+    Home,
+} from "lucide-react";
 
 import "./App.css";
 
@@ -71,6 +78,15 @@ function App() {
                                         icon: <BookOpen />,
                                     },
                                 },
+                                {
+                                    name: "classes",
+                                    list: "/classes",
+                                    create: "/classes/create",
+                                    meta: {
+                                        label: "Classes",
+                                        icon: <GraduationCap />,
+                                    },
+                                },
                             ]}
                         >
                             <Routes>
@@ -81,20 +97,33 @@ function App() {
                                         </Layout>
                                     }
                                 >
+                                    {/* Dashboard */}
                                     <Route
                                         path="/"
                                         element={<Dashboard />}
                                     />
 
+                                    {/* Subjects */}
                                     <Route path="/subjects">
                                         <Route
                                             index
                                             element={<SubjectList />}
                                         />
-
                                         <Route
                                             path="create"
                                             element={<SubjectCreate />}
+                                        />
+                                    </Route>
+
+                                    {/* Classes */}
+                                    <Route path="/classes">
+                                        <Route
+                                            index
+                                            element={<ClassList />}
+                                        />
+                                        <Route
+                                            path="create"
+                                            element={<ClassCreate />}
                                         />
                                     </Route>
                                 </Route>
