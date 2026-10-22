@@ -107,7 +107,7 @@ const SubjectsList = () => {
             sorters: {
                 initial: [
                     {
-                        field: "title",
+                        field: "name", // or "code"
                         order: "asc",
                     },
                 ],

@@ -25,7 +25,7 @@ const buildHttpError = async (response: Response): Promise<HttpError> => {
 
 const options: CreateDataProviderOptions = {
   getList: {
-    getEndpoint: ({ resource }: { resource: string }) => resource,
+    getEndpoint: ({ resource }) => resource, // 👈 Removed explicit parameter type annotation
 
     buildQueryParams: async ({ resource, pagination, filters }) => {
       const page = pagination?.currentPage ?? 1;
@@ -75,14 +75,14 @@ const options: CreateDataProviderOptions = {
   },
 
   create: {
-    getEndpoint: ({ resource }: { resource: string }) => resource,
+    getEndpoint: ({ resource }) => resource, // 👈 Removed explicit parameter type annotation
 
     buildBodyParams: async ({ variables }) => variables,
 
     mapResponse: async (response) => {
       if (!response.ok) throw await buildHttpError(response);
 
-      const json: CreateResponse = await response.json();
+      const json: CreateResponse = await response.json(); // 👈 CreateResponse is now properly imported
       return json.data ?? [];
     },
   },
