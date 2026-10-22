@@ -11,6 +11,7 @@ interface UploadWidgetProps {
     value?: UploadWidgetValue | null;
     onChange?: (file: UploadWidgetValue | null) => void;
     disabled?: boolean;
+
 }
 
 const UploadWidget = ({ value = null, onChange, disabled = false }: UploadWidgetProps) => {

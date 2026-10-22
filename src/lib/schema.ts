@@ -36,10 +36,7 @@ export const classSchema = z.object({
         required_error: "Subject is required",
         invalid_type_error: "Subject is required",
     }),
-    teacherId: z.number({
-        required_error: "Teacher is required",
-        invalid_type_error: "Teacher is required",
-    }),
+    teacherId: z.string().min(1, "Teacher is required"),
 
     capacity: z.number().optional(),
     bannerUrl: z.string().optional(),
