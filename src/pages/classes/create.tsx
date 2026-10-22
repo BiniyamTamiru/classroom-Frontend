@@ -26,36 +26,51 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
-import { useBack, type HttpError } from "@refinedev/core";
+import { useBack, type HttpError, useList } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { classSchema } from "@/lib/schema";
-import type { Subject } from "@/types";
+import type { Subject, User } from "@/types";
 import UploadWidget, { type UploadWidgetValue } from "@/upload-widget";
 
 type ClassFormValues = z.infer<typeof classSchema>;
 
-const MOCK_TEACHERS = [
-    { id: 1, name: "Alice Johnson" },
-    { id: 2, name: "Michael Smith" },
-];
-
-const MOCK_SUBJECTS: Pick<Subject, "id" | "name" | "code">[] = [
-    { id: 1, name: "Mathematics", code: "MATH" },
-    { id: 2, name: "Computer Science", code: "CS" },
-];
-
 const ClassCreate = () => {
     const back = useBack();
+
+    const { query: subjectsQuery } = useList<Subject>({
+        resource: "subjects",
+        pagination: { pageSize: 100 },
+        queryOptions: { staleTime: 5 * 60 * 1000 },
+    });
+
+    const { query: teacherQuery } = useList<User>({
+        resource: "users",
+        filters: [{ field: "role", operator: "eq", value: "teacher" }],
+        pagination: { pageSize: 100 },
+        queryOptions: { staleTime: 5 * 60 * 1000 },
+    });
+
+    const subjects = subjectsQuery?.data?.data || [];
+    const subjectLoading = subjectsQuery.isLoading;
+
+    const teachers = teacherQuery?.data?.data || [];
+    const teacherLoading = teacherQuery.isLoading;
 
     const form = useForm<ClassFormValues, HttpError, ClassFormValues>({
         resolver: zodResolver(classSchema),
         refineCoreProps: {
             resource: "classes",
             action: "create",
-        }
-
+        },
+        defaultValues: {
+            name: "",
+            description: "",
+            status: "active",
+            bannerUrl: "",
+            bannerCldPubId: "",
+        },
     });
 
     const {
@@ -65,7 +80,7 @@ const ClassCreate = () => {
         formState: { isSubmitting, errors },
     } = form;
 
-    const bannerPublicId = form.watch('bannerCldPubId');
+    const bannerPublicId = form.watch("bannerCldPubId");
 
     const setBannerImage = (
         file: UploadWidgetValue | null,
@@ -73,20 +88,18 @@ const ClassCreate = () => {
     ) => {
         if (file) {
             field.onChange(file.url);
-            form.setValue('bannerCldPubId', file.publicId,
-                {
-                    shouldValidate: true,
-                    shouldDirty: true
-                }
-            )
-        } else {
-            field.onChange('');
-            form.setValue('bannerCldPubId', '', {
+            form.setValue("bannerCldPubId", file.publicId, {
                 shouldValidate: true,
-                shouldDirty: true
-            })
+                shouldDirty: true,
+            });
+        } else {
+            field.onChange("");
+            form.setValue("bannerCldPubId", "", {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
         }
-    }
+    };
 
     const onSubmit = async (values: ClassFormValues) => {
         try {
@@ -137,15 +150,22 @@ const ClassCreate = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Banner Image <span className="text-orange-600">*</span>
+                                                    Banner Image{" "}
+                                                    <span className="text-orange-600">*</span>
                                                 </FormLabel>
                                                 <FormControl>
                                                     <UploadWidget
-                                                        value={field.value ? {
-                                                            url: field.value,
-                                                            publicId: bannerPublicId ?? ''
-                                                        } : null}
-                                                        onChange={(file) => setBannerImage(file, field)}
+                                                        value={
+                                                            field.value
+                                                                ? {
+                                                                    url: field.value,
+                                                                    publicId: bannerPublicId ?? "",
+                                                                }
+                                                                : null
+                                                        }
+                                                        onChange={(file) =>
+                                                            setBannerImage(file, field)
+                                                        }
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -170,7 +190,7 @@ const ClassCreate = () => {
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder="Introduction to Bayolojii - section A"
+                                                        placeholder="Introduction to Biology - section A"
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -179,8 +199,29 @@ const ClassCreate = () => {
                                         )}
                                     />
 
-                                    <div className="grid sm:grid-cols-2 gap-4">
-                                        {/* Subject */}
+                                    {/* Description */}
+                                    <FormField
+                                        control={control}
+                                        name="description"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Description{" "}
+                                                    <span className="text-orange-600">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Short description of the class"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <div className="grid sm:grid-cols-2 gap-4 items-start">
+                                        {/* Subject (numeric id) */}
                                         <FormField
                                             control={control}
                                             name="subjectId"
@@ -194,7 +235,12 @@ const ClassCreate = () => {
                                                         onValueChange={(value) =>
                                                             field.onChange(Number(value))
                                                         }
-                                                        value={field.value?.toString()}
+                                                        value={
+                                                            field.value
+                                                                ? field.value.toString()
+                                                                : ""
+                                                        }
+                                                        disabled={subjectLoading}
                                                     >
                                                         <FormControl>
                                                             <SelectTrigger className="w-full">
@@ -202,14 +248,20 @@ const ClassCreate = () => {
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
-                                                            {MOCK_SUBJECTS.map((subject) => (
-                                                                <SelectItem
-                                                                    key={subject.id}
-                                                                    value={subject.id.toString()}
-                                                                >
-                                                                    {subject.name} ({subject.code})
-                                                                </SelectItem>
-                                                            ))}
+                                                            {subjectsQuery.isError ? (
+                                                                <div className="p-2 text-sm text-destructive">
+                                                                    Failed to load subjects
+                                                                </div>
+                                                            ) : (
+                                                                subjects.map((subject) => (
+                                                                    <SelectItem
+                                                                        key={subject.id}
+                                                                        value={subject.id.toString()}
+                                                                    >
+                                                                        {subject.name} ({subject.code})
+                                                                    </SelectItem>
+                                                                ))
+                                                            )}
                                                         </SelectContent>
                                                     </Select>
                                                     <FormMessage />
@@ -217,7 +269,7 @@ const ClassCreate = () => {
                                             )}
                                         />
 
-                                        {/* Teacher */}
+                                        {/* Teacher (string id) */}
                                         <FormField
                                             control={control}
                                             name="teacherId"
@@ -229,9 +281,10 @@ const ClassCreate = () => {
                                                     </FormLabel>
                                                     <Select
                                                         onValueChange={(value) =>
-                                                            field.onChange(Number(value))
+                                                            field.onChange(value)
                                                         }
-                                                        value={field.value?.toString()}
+                                                        value={field.value ?? ""}
+                                                        disabled={teacherLoading}
                                                     >
                                                         <FormControl>
                                                             <SelectTrigger className="w-full">
@@ -239,14 +292,20 @@ const ClassCreate = () => {
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
-                                                            {MOCK_TEACHERS.map((teacher) => (
-                                                                <SelectItem
-                                                                    key={teacher.id}
-                                                                    value={teacher.id.toString()}
-                                                                >
-                                                                    {teacher.name}
-                                                                </SelectItem>
-                                                            ))}
+                                                            {teacherQuery.isError ? (
+                                                                <div className="p-2 text-sm text-destructive">
+                                                                    Failed to load teachers
+                                                                </div>
+                                                            ) : (
+                                                                teachers.map((teacher) => (
+                                                                    <SelectItem
+                                                                        key={teacher.id}
+                                                                        value={String(teacher.id)}
+                                                                    >
+                                                                        {teacher.name}
+                                                                    </SelectItem>
+                                                                ))
+                                                            )}
                                                         </SelectContent>
                                                     </Select>
                                                     <FormMessage />
