@@ -6,9 +6,33 @@ export const DEPARTEMENTS = [
     "Law",
 ];
 
+export const SUBJECTS = [
+    "data structures",
+    "signal",
+    "math",
+];
+
+export const TEACHER = [
+    "LALISA",
+    "TOLA",
+    "TEMESGEN",
+];
+
 export const DEPARTMENTS_OPTIONS = DEPARTEMENTS.map((dept) => ({
     value: dept,
     label: dept,
+}));
+
+// Fixed variable name to match ClassesList, renamed parameter to avoid conflict with date-fns
+export const SUBJECTS_OPTIONS = SUBJECTS.map((subjectItem) => ({
+    value: subjectItem,
+    label: subjectItem,
+}));
+
+// Fixed variable name to match ClassesList (TEACHERS_OPTIONS)
+export const TEACHERS_OPTIONS = TEACHER.map((tech) => ({
+    value: tech,
+    label: tech,
 }));
 
 export const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB in bytes
@@ -25,7 +49,6 @@ const requireEnv = (name: string, value: string | undefined): string => {
     if (!trimmedValue) {
         throw new Error(`Missing required environment variable: ${name}`);
     }
-
     return trimmedValue;
 };
 
@@ -40,7 +63,6 @@ const requireUrlEnv = (name: string, value: string | undefined): string => {
     if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
         throw new Error(`Invalid URL in environment variable: ${name}`);
     }
-
     return url;
 };
 

@@ -17,9 +17,11 @@ import type { Subject } from "@/types";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Search } from "lucide-react";
 
+
 const SubjectsList = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState("all");
+
 
     const departmentFilters =
         selectedDepartment === "all"

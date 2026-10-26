@@ -42,14 +42,14 @@ const ClassCreate = () => {
     const { query: subjectsQuery } = useList<Subject>({
         resource: "subjects",
         pagination: { pageSize: 100 },
-        queryOptions: { staleTime: 5 * 60 * 1000 },
+        queryOptions: { staleTime: 300000 },
     });
 
     const { query: teacherQuery } = useList<User>({
         resource: "users",
         filters: [{ field: "role", operator: "eq", value: "teacher" }],
         pagination: { pageSize: 100 },
-        queryOptions: { staleTime: 5 * 60 * 1000 },
+        queryOptions: { staleTime: 300000 },
     });
 
     const subjects = subjectsQuery?.data?.data || [];
@@ -70,6 +70,7 @@ const ClassCreate = () => {
             status: "active",
             bannerUrl: "",
             bannerCldPubId: "",
+            capacity: 30,
         },
     });
 
@@ -220,7 +221,7 @@ const ClassCreate = () => {
                                         )}
                                     />
 
-                                    <div className="grid sm:grid-cols-2 gap-4 items-start">
+                                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
                                         {/* Subject (numeric id) */}
                                         <FormField
                                             control={control}
@@ -306,6 +307,59 @@ const ClassCreate = () => {
                                                                     </SelectItem>
                                                                 ))
                                                             )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        {/* Capacity */}
+                                        <FormField
+                                            control={control}
+                                            name="capacity"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>
+                                                        Capacity{" "}
+                                                        <span className="text-orange-600">*</span>
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="number"
+                                                            placeholder="30"
+                                                            {...field}
+                                                            onChange={(e) => field.onChange(Number(e.target.value))}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        {/* Status */}
+                                        <FormField
+                                            control={control}
+                                            name="status"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>
+                                                        Status{" "}
+                                                        <span className="text-orange-600">*</span>
+                                                    </FormLabel>
+                                                    <Select
+                                                        onValueChange={field.onChange}
+                                                        value={field.value || "active"}
+                                                    >
+                                                        <FormControl>
+                                                            <SelectTrigger className="w-full">
+                                                                <SelectValue placeholder="Select status" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <SelectItem value="active">Active</SelectItem>
+                                                            <SelectItem value="inactive">Inactive</SelectItem>
+                                                            <SelectItem value="archived">Archived</SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                     <FormMessage />
