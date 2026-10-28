@@ -17,6 +17,8 @@ import {
     Outlet,
 } from "react-router";
 
+
+
 import routerProvider, {
     UnsavedChangesNotifier,
     DocumentTitleHandler,
@@ -30,6 +32,7 @@ import SubjectCreate from "./pages/Subjects/create";
 
 import ClassList from "./pages/classes/list";
 import ClassCreate from "./pages/classes/create";
+import ClassShow from "./pages/classes/show.tsx";
 
 import dataProvider from "./providers/data";
 
@@ -44,6 +47,7 @@ import {
 } from "lucide-react";
 
 import "./App.css";
+import Show from "@/pages/classes/show.tsx";
 
 function App() {
     return (
@@ -71,9 +75,9 @@ function App() {
                                 },
                                 {
                                     name: "subjects",
-                                    list: "/subjects",
-                                    create: "/subjects/create",
-                                    meta: {
+                                     list: "/subjects",
+                                     create: "/subjects/create",
+                                     meta: {
                                         label: "Subjects",
                                         icon: <BookOpen />,
                                     },
@@ -82,6 +86,7 @@ function App() {
                                     name: "classes",
                                     list: "/classes",
                                     create: "/classes/create",
+                                    show:"/classes/show/:id",
                                     meta: {
                                         label: "Classes",
                                         icon: <GraduationCap />,
@@ -125,6 +130,11 @@ function App() {
                                             path="create"
                                             element={<ClassCreate />}
                                         />
+                                        <Route
+                                           path="show/:id"
+                                           element={<ClassShow />}
+
+                                            />
                                     </Route>
                                 </Route>
                             </Routes>

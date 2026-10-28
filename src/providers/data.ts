@@ -4,7 +4,7 @@ import {
 } from "@refinedev/rest";
 
 import { BACKEND_BASE_URL } from "@/components/constant";
-import type { ListResponse } from "@/types";
+import type {GetOneResponse, ListResponse} from "@/types";
 import type { HttpError, CreateResponse } from "@refinedev/core";
 
 const buildHttpError = async (response: Response): Promise<HttpError> => {
@@ -34,6 +34,7 @@ const options: CreateDataProviderOptions = {
       const params: Record<string, string | number> = {
         page,
         limit: pageSize,
+
       };
 
       // 1. Handle filters passed from Refine tables / hooks
@@ -105,6 +106,15 @@ const options: CreateDataProviderOptions = {
       return json.data ?? [];
     },
   },
+
+  getOne: {
+    getEndpoint: ({ resource,id }) => `${resource}/${id}`,
+    mapResponse: async(response) => {
+      const json: GetOneResponse = await response.json();
+
+      return json.data ?? [];
+    }
+  }
 };
 
 const { dataProvider } = createDataProvider(

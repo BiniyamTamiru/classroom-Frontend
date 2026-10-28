@@ -104,6 +104,7 @@ const ClassCreate = () => {
 
     const onSubmit = async (values: ClassFormValues) => {
         try {
+
             await onFinish(values);
         } catch (error) {
             console.log("error creating new class", error);
@@ -287,6 +288,7 @@ const ClassCreate = () => {
                                                         value={field.value ?? ""}
                                                         disabled={teacherLoading}
                                                     >
+
                                                         <FormControl>
                                                             <SelectTrigger className="w-full">
                                                                 <SelectValue placeholder="Select a teacher" />
@@ -354,6 +356,7 @@ const ClassCreate = () => {
                                                         <FormControl>
                                                             <SelectTrigger className="w-full">
                                                                 <SelectValue placeholder="Select status" />
+
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
@@ -370,6 +373,7 @@ const ClassCreate = () => {
 
                                     <Button type="submit" disabled={isSubmitting}>
                                         {isSubmitting ? "Submitting..." : "Submit"}
+
                                     </Button>
                                 </FieldGroup>
                             </form>
