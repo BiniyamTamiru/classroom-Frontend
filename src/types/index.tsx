@@ -176,12 +176,21 @@ export type Classroom = {
 export type classes = {
     id: string | number;
     name: string;
+    description?: string | null; // Added description
     status: string;
-    subject: string | { name: string };
+    capacity?: number | null;
+    subject?: {
+        code?: string;
+        name: string;
+        description?: string;
+    };
     teacher?: string | User;
     teacherId?: string;
-    capacity?: number | { capacity: number };
-    bannerUrl?: string;
-    bannerCldPubId?: string;
+    department?: {
+        name: string;
+        description?: string;
+    }; // Added department
+    bannerUrl?: string | null;
+    bannerCldPubId?: string | null; // Matches your Drizzle schema capital 'P'
     inviteCode?: string;
 };

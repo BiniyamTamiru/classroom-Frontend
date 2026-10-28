@@ -16,6 +16,7 @@ import { useTable } from "@refinedev/react-table";
 import { useSelect } from "@refinedev/core";
 import { Badge } from "@/components/ui/badge.tsx";
 import { classes } from "@/types";
+import {ShowButton} from "@/components/refine-ui/buttons/show.tsx";
 
 const ClassesList = () => {
     const [inputValue, setInputValue] = useState("");
@@ -161,7 +162,25 @@ const ClassesList = () => {
                             </Badge>
                         );
                     },
+
                 },
+                {
+                    id: "Class Detail",
+                    size: 140,
+                    header: () => (
+                        <p className="column-title">Class Detail</p>
+                    ),
+                    cell: ({ row }) => (
+                        <ShowButton
+                            resource="classes"
+                            recordItemId={row.original.id}
+                            variant="outline"
+
+                        >
+                            View
+                        </ShowButton>
+                    ),
+                }
             ],
             []
         ),
