@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useRegister } from "@refinedev/core";
 import {
     Eye,
     EyeOff,
@@ -15,21 +14,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-
 import { authClient } from "@/lib/auth-client.ts";
 
 export default function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [role, setRole] = useState("student");
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -239,23 +229,6 @@ export default function SignUp() {
                                         required
                                     />
                                 </div>
-                            </div>
-
-                            {/* Role Select Dropdown */}
-                            <div className="space-y-1.5 text-left">
-                                <label className="text-xs font-medium text-stone-700">
-                                    Role
-                                </label>
-                                <Select value={role} onValueChange={setRole}>
-                                    <SelectTrigger className="h-11 w-full rounded-xl border-stone-200 bg-white text-stone-900 transition focus:ring-2 focus:ring-indigo-200">
-                                        <SelectValue placeholder="Select role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="student">Student</SelectItem>
-                                        <SelectItem value="teacher">Teacher</SelectItem>
-                                        <SelectItem value="admin">Admin</SelectItem>
-                                    </SelectContent>
-                                </Select>
                             </div>
 
                             {/* Remember Me Checkbox */}

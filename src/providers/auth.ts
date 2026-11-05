@@ -23,7 +23,7 @@ export const authProvider: AuthProvider = {
 
         return {
             success: true,
-            redirectTo: "/",
+            redirectTo: "/dashboard",
         };
     },
 
@@ -83,11 +83,22 @@ export const authProvider: AuthProvider = {
                 return null;
             }
 
+            const userWithRole = data.user as typeof data.user & {
+                role?: unknown;
+            };
+            const role =
+                userWithRole.role === "admin" ||
+                userWithRole.role === "teacher" ||
+                userWithRole.role === "student"
+                    ? userWithRole.role
+                    : undefined;
+
             return {
                 id: data.user.id,
                 name: data.user.name,
                 email: data.user.email,
                 avatar: data.user.image,
+                role,
             };
         } catch {
             return null;
