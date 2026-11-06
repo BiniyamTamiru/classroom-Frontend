@@ -55,7 +55,7 @@ const ClassesList = () => {
         refineCoreProps: {
             resource: "classes",
             pagination: { pageSize: 10, mode: "server" },
-            sorts: {
+            sorters: {
                 initial: [
                     { field: "id", order: "desc" },
                 ],

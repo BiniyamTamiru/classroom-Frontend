@@ -99,8 +99,9 @@ export type Subject = {
     id: number;
     name: string;
     code: string;
-    description: string;
-    department: string;
+    description: string | null;
+    departmentId?: number;
+    department: Department;
     createdAt?: string;
 };
 
@@ -135,7 +136,7 @@ declare global {
 }
 
 export type User = {
-    id: number;
+    id: string;
     name: string;
     email: string;
     image?: string;
@@ -145,10 +146,92 @@ export type User = {
 
 export type UserRole = "admin" | "teacher" | "student";
 
+export type Enrollment = {
+    id: number;
+    studentId: string;
+    classId: number;
+    createdAt: string;
+    updatedAt: string;
+    student: Pick<User, "id" | "name" | "email" | "role">;
+    class: {
+        id: number;
+        name: string;
+        subjectId: number;
+        teacherId: string;
+        subject: {
+            id: number;
+            name: string;
+            code: string;
+        } | null;
+    };
+};
+
+export type EnrollmentShowResponse = {
+    enrollmentWithRelations: Enrollment;
+};
+
 export type Department = {
     id: number;
     name: string;
     code: string;
+};
+
+export type SubjectDetails = Subject & {
+    classes: Array<{
+        id: number;
+        name: string;
+        status: "active" | "inactive" | "archived";
+        teacher: {
+            id: string | null;
+            name: string | null;
+        } | null;
+    }>;
+};
+
+export type SubjectDetailsResponse = {
+    subjectWithDepartment: SubjectDetails;
+};
+
+export type DepartmentListItem = Department & {
+    totalSubjects: number;
+};
+
+export type DepartmentDetails = {
+    department: Department & {
+        description: string | null;
+    };
+    totalSubjects: number;
+    totalClasses: number;
+    totalEnrolledStudents: number;
+    subjects: Array<{
+        id: number;
+        code: string;
+        name: string;
+        description: string | null;
+    }>;
+    classes: Array<{
+        id: number;
+        name: string;
+        status: "active" | "inactive" | "archived";
+        subject: {
+            id: number;
+            code: string;
+            name: string;
+        };
+        teacher: {
+            id: string;
+            name: string;
+            email: string;
+            role: UserRole;
+        };
+    }>;
+    users: Array<{
+        id: string;
+        name: string;
+        email: string;
+        role: UserRole;
+        relationships: string[];
+    }>;
 };
 
 export type Schedule = {

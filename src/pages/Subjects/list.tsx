@@ -9,18 +9,27 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select.tsx";
-import { DEPARTMENTS_OPTIONS } from "@/components/constant";
 import { CreateButton } from "@/components/refine-ui/buttons/create.tsx";
+import { EditButton } from "@/components/refine-ui/buttons/edit.tsx";
+import { ShowButton } from "@/components/refine-ui/buttons/show.tsx";
 import { DataTable } from "@/components/refine-ui/data-table/data-table.tsx";
+import { useList } from "@refinedev/core";
 import { useTable } from "@refinedev/react-table";
-import type { Subject } from "@/types";
+import type { Department, Subject } from "@/types";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Search } from "lucide-react";
+import { SubjectDeleteAction } from "@/pages/Subjects/delete-action";
 
 
 const SubjectsList = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState("all");
+    const departmentsQuery = useList<Department>({
+        resource: "departments",
+        pagination: { currentPage: 1, pageSize: 100 },
+        meta: { query: { limit: 100 } },
+    });
+    const departmentOptions = departmentsQuery.query.data?.data ?? [];
 
 
     const departmentFilters =
@@ -28,7 +37,7 @@ const SubjectsList = () => {
             ? []
             : [
                 {
-                    field: "department",
+                    field: "department_id",
                     operator: "eq" as const,
                     value: selectedDepartment,
                 },
@@ -94,6 +103,30 @@ const SubjectsList = () => {
                         </span>
                     ),
                 },
+                {
+                    id: "actions",
+                    size: 150,
+                    header: () => <p className="column-title">Actions</p>,
+                    cell: ({ row }) => (
+                        <div className="flex items-center gap-1">
+                            <ShowButton
+                                resource="subjects"
+                                recordItemId={row.original.id}
+                                variant="ghost"
+                                size="icon"
+                                aria-label={`View ${row.original.name}`}
+                            />
+                            <EditButton
+                                resource="subjects"
+                                recordItemId={row.original.id}
+                                variant="ghost"
+                                size="icon"
+                                aria-label={`Edit ${row.original.name}`}
+                            />
+                            <SubjectDeleteAction subject={row.original} compact />
+                        </div>
+                    ),
+                },
             ],
             []
         ),
@@ -155,12 +188,12 @@ const SubjectsList = () => {
                                     All departments
                                 </SelectItem>
 
-                                {DEPARTMENTS_OPTIONS.map((department) => (
+                                {departmentOptions.map((department) => (
                                     <SelectItem
-                                        key={department.value}
-                                        value={department.value}
+                                        key={department.id}
+                                        value={String(department.id)}
                                     >
-                                        {department.label}
+                                        {department.name}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -168,6 +201,11 @@ const SubjectsList = () => {
 
                         <CreateButton />
                     </div>
+                    {departmentsQuery.query.isError && (
+                        <p role="alert" className="text-sm text-destructive">
+                            {departmentsQuery.query.error.message || "Unable to load department filters."}
+                        </p>
+                    )}
                 </div>
             </div>
 
